@@ -16,6 +16,14 @@
             this.TimeForProcessingOnFirstProcessor = TimeForProcessingOnFirstProcessor;
             this.TimeForProcessingOnSecondProcessor = TimeForProcessingOnSecondProcessor;
         }
+        public int FindMinSpeed()
+        {
+            if (TimeForProcessingOnFirstProcessor < TimeForProcessingOnSecondProcessor)
+            {
+                return TimeForProcessingOnFirstProcessor;
+            }
+            else return TimeForProcessingOnSecondProcessor;
+        }
     }
     class TwoProcessorZad
     {
@@ -45,7 +53,8 @@
                 foreach(var ChoseMaterial in ListOfNotRaspred)
                 {
                     Material MaterialWithMinSpeedOfProcessing = ListOfNotRaspred[0];
-
+                    if (MaterialWithMinSpeedOfProcessing.FindMinSpeed() > ChoseMaterial.FindMinSpeed()) MaterialWithMinSpeedOfProcessing = ChoseMaterial;
+                    else if(MaterialWithMinSpeedOfProcessing.FindMinSpeed() == ChoseMaterial.FindMinSpeed())
                 }
             }
         }
