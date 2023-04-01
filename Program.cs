@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            TwoProcessorZad Zad = new TwoProcessorZad("InputData3.txt");
+            TwoProcessorZad Zad = new TwoProcessorZad("InputData7.txt");
             Zad.CreateOptimalRasp();
             Zad.VivodResRasp();
             Console.WriteLine($"Время простоя до оптимизации: {Zad.FindMax(Zad.StartRasp)}\nВремя простоя после оптимизации: {Zad.FindMax(Zad.EndRasp)}");
@@ -41,41 +41,23 @@
         public static void SortListOfMatherial(List<Material> MatherialList, StateOfSort State = StateOfSort.SortOnFirstSpeed) //Метод сортировки списка материалов
         {
             bool flag = true;
-            if(State == StateOfSort.SortOnFirstSpeed)
+            while (flag)
             {
-                while (flag)
+                flag = false;
+                for (int i = 0; i < MatherialList.Count - 1; i++)
                 {
-                    flag = false;
-                    for (int i = 0; i < MatherialList.Count - 1; i++)
+                    if((MatherialList[i].FindMinSpeed() > MatherialList[i+1].FindMinSpeed()) || ((MatherialList[i].FindMinSpeed() == MatherialList[i + 1].FindMinSpeed()) && (MatherialList[i].SumSpeed() < MatherialList[i+1].SumSpeed())))
                     {
-                        if((MatherialList[i].FindMinSpeed() > MatherialList[i+1].FindMinSpeed()) 
-                            || ((MatherialList[i].FindMinSpeed() == MatherialList[i + 1].FindMinSpeed()) && (MatherialList[i].SumSpeed() < MatherialList[i+1].SumSpeed())))
-                        {
-                            Material MathForReplace = MatherialList[i];
-                            MatherialList[i] = MatherialList[i + 1];
-                            MatherialList[i + 1] = MathForReplace;
-                            flag = true;
-                        }
+                        Material MathForReplace = MatherialList[i];
+                        MatherialList[i] = MatherialList[i + 1];
+                        MatherialList[i + 1] = MathForReplace;
+                        flag = true;
                     }
                 }
             }
             if (State == StateOfSort.SortOnSecondSpeed)
             {
-                while (flag)
-                {
-                    flag = false;
-                    for (int i = 0; i < MatherialList.Count - 1; i++)
-                    {
-                        if ((MatherialList[i].FindMinSpeed() < MatherialList[i + 1].FindMinSpeed())
-                            || ((MatherialList[i].FindMinSpeed() == MatherialList[i + 1].FindMinSpeed()) && (MatherialList[i].SumSpeed() > MatherialList[i + 1].SumSpeed())))
-                        {
-                            Material MathForReplace = MatherialList[i];
-                            MatherialList[i] = MatherialList[i + 1];
-                            MatherialList[i + 1] = MathForReplace;
-                            flag = true;
-                        }
-                    }
-                }
+                MatherialList.Reverse();
             }
         }
     }
