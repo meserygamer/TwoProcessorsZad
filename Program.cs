@@ -4,8 +4,10 @@
     {
         static void Main(string[] args)
         {
-            TwoProcessorZad Zad = new TwoProcessorZad();
+            TwoProcessorZad Zad = new TwoProcessorZad("InputData3.txt");
             Zad.CreateOptimalRasp();
+            Zad.VivodResRasp();
+            Console.WriteLine($"Время простоя до оптимизации: {Zad.FindMax(Zad.StartRasp)}\nВремя простоя после оптимизации: {Zad.FindMax(Zad.EndRasp)}");
         }
     }
     struct Material
@@ -31,6 +33,10 @@
         {
             SortOnFirstSpeed,
             SortOnSecondSpeed
+        }
+        public override string ToString()
+        {
+            return TimeForProcessingOnFirstProcessor + "\t" + TimeForProcessingOnSecondProcessor;
         }
         public static void SortListOfMatherial(List<Material> MatherialList, StateOfSort State = StateOfSort.SortOnFirstSpeed) //Метод сортировки списка материалов
         {
@@ -75,20 +81,17 @@
     }
     class TwoProcessorZad
     {
-        Material[] StartRasp; //Изначальный массив материалов
-        Material[] EndRasp; //Массив материалов после сортировки
+        public Material[] StartRasp {get;protected set;} //Изначальный массив материалов
+        public Material[] EndRasp {get;protected set;} //Массив материалов после сортировки
         int CountOfMaterial; //Количество материалов
-        public TwoProcessorZad()
+        public TwoProcessorZad(string path)
         {
-            Console.WriteLine("Введите количество матриалов для обработки");
-            CountOfMaterial = Convert.ToInt32(Console.ReadLine()); 
-            StartRasp = new Material[CountOfMaterial]; 
-            EndRasp = new Material[CountOfMaterial]; 
-            for(int i = 0; i < CountOfMaterial; i++) //Заполнение массива материалов
+            string[] InputFromFile = File.ReadAllLines(path);
+            StartRasp = new Material[InputFromFile.Length];
+            EndRasp = new Material[InputFromFile.Length];
+            for(int i = 0; i < InputFromFile.Length; i++)
             {
-                Console.WriteLine($"Введите скорость обработки материала №{i+1} на процессоре 1 и на процессоре 2 соответвенно");
-                string SpeedOfProcessing = Console.ReadLine();
-                StartRasp[i] = new Material(Convert.ToInt32(SpeedOfProcessing.Split(" ")[0]), Convert.ToInt32(SpeedOfProcessing.Split(" ")[1]));
+                StartRasp[i] = new Material(Convert.ToInt32(InputFromFile[i].Split(" ")[0]), Convert.ToInt32(InputFromFile[i].Split(" ")[1]));
             }
         }
         public void CreateOptimalRasp()
@@ -103,6 +106,24 @@
             Material.SortListOfMatherial(MatherialThatProcessingFasterOnFirstProcessor, Material.StateOfSort.SortOnFirstSpeed);
             Material.SortListOfMatherial(MatherialThatProcessingFasterOnSecondProcessor, Material.StateOfSort.SortOnSecondSpeed);
             EndRasp = MatherialThatProcessingFasterOnFirstProcessor.Concat(MatherialThatProcessingFasterOnSecondProcessor).ToArray(); //Два массива в один
+        }
+        public int FindMax(Material[] Rasp)
+        {
+            int max = Rasp[0].TimeForProcessingOnFirstProcessor;
+            int NowSum = Rasp[0].TimeForProcessingOnFirstProcessor;
+            for (int i = 1; i < Rasp.Length; i++)
+            {
+                NowSum += Rasp[i].TimeForProcessingOnFirstProcessor - Rasp[i - 1].TimeForProcessingOnSecondProcessor;
+                if(max < NowSum) max = NowSum;
+            }
+            return max;
+        }
+        public void VivodResRasp()
+        {
+            Console.WriteLine("Исходная матрица:");
+            foreach(var a in StartRasp) Console.WriteLine(a);
+            Console.WriteLine("После распределения:");
+            foreach(var a in EndRasp) Console.WriteLine(a);
         }
     }
 }
